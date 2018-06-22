@@ -1,0 +1,259 @@
+<!doctype html>
+
+<html>
+
+<head>
+    <title> Room Occupancy Indicating System</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4"
+        crossorigin="anonymous">
+</head>
+
+<body>
+    <! <meta http-equiv="refresh" content="1">
+
+    <p>
+        <strong>Status:
+            <span id="connection_status" style="color:#ff0000;"> Not Connected </span>
+        </strong>
+    </p>
+    <br>
+
+    <h3 align="center">3rd Floor</h3>
+    <br>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-sm">
+                <div id="node1" class="card text-center border-success">
+                    <div class="card-header text-white bg-success">
+                        <h3 class="card-title">Room 306</h3>
+                        <i><h7 class="card-subtitle">Active</h7></i>
+                    </div>
+                    <div class="card-body">
+                        <h6 class="card-text">Activity:</h6>
+                        <h3 class="activity card-text text-success">Detected</h3>
+                    </div>
+                    <div class="card-footer text-right text-white bg-success">
+                        ---
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm">
+                <div id="node2" class="card text-center border-danger">
+                    <div class="card-header text-white bg-danger">
+                        <h3 class="card-title">Room 304 (1)</h3>
+                        <i><h7 class="card-subtitle">Active</h7></i>
+                    </div>
+                    <div class="card-body">
+                        <h6 class="card-text">Activity:</h6>
+                        <h3 class="activity card-text text-danger">None</h3>
+                    </div>
+                    <div class="card-footer text-right text-white bg-danger">
+                        ---
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm">
+                <div id="node3" class="card text-center border-default">
+                    <div class="card-header bg-default">
+                        <h3 class="card-title">Room 304 (2)</h3>
+                        <i><h7 class="card-subtitle">Inactive</h7></i>
+                    </div>
+                    <div class="card-body">
+                        <h6 class="card-text">Activity:</h6>
+                        <h3 class="activity card-text text-default">None</h3>
+                    </div>
+                    <div class="card-footer text-right bg-default">
+                        ---
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br>
+        <!--<div class="row">
+                <div class="col-sm">
+                    <div id="node1" class="card text-center border-success">
+                        <div class="card-header text-white bg-success">
+                            <h3 class="card-title">Node 1</h3>
+                            <h7 class="card-subtitle">Active</h7>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-text">Activity:</p>
+                            <h3 class="activity card-text text-success">Detected</h3>
+                        </div>
+                        <div class="card-footer text-right text-white bg-success">
+                            since 5 mins
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm">
+                    <div id="node2" class="card text-center border-danger">
+                        <div class="card-header text-white bg-danger">
+                            <h3 class="card-title">Node 1</h3>
+                            <h7 class="card-subtitle">Inactive</h7>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-text">Activity:</p>
+                            <h3 class="activity card-text text-danger">None</h3>
+                        </div>
+                        <div class="card-footer text-right text-white bg-danger">
+                            since 5 mins
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm">
+                    <div id="node3" class="card text-center border-default">
+                        <div class="card-header bg-default">
+                            <h3 class="card-title">Node 1</h3>
+                            <h7 class="card-subtitle">Inactive</h7>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-text">Activity:</p>
+                            <h3 class="activity card-text text-default">None</h3>
+                        </div>
+                        <div class="card-footer text-right bg-default">
+                            since 5 mins
+                        </div>
+                    </div>
+                </div>
+            </div>-->
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js" integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm"
+        crossorigin="anonymous"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.0/moment.js"></script>
+    <script type="text/javascript" charset="utf-8">
+        var all_nodes_data = {};
+
+        let socket = io.connect('http://' + document.domain + ':' + location.port);
+        socket.on('connect', function () {
+            socket.emit('my event', {
+                data: 'I\'m connected!'
+            });
+            document.getElementById("connection_status").innerText = " Connected";
+            document.getElementById("connection_status").style = "color:#00ff00;"
+
+            setInactive('#node1');
+            setInactive('#node2');
+            setInactive('#node3');
+
+        });
+
+        socket.on('event_response', data => {
+            console.log(data);
+            let node_number = data[0];
+            let node_state = data[2];
+            
+            all_nodes_data[node_number.toString()] = data;
+            // node_data = [node_number, room_number, state, timestamp in Unix format]
+
+            setActive('#node' + node_number.toString());
+            
+            if (node_state === 1) {
+                setActivity('#node' + node_number.toString())
+            }
+            else {
+                clearActivity('#node' + node_number.toString());
+            }
+
+        });
+
+        var update;
+        (update = function () {
+            for (let key in all_nodes_data) {
+                //console.log(all_nodes_data[key]);
+                let node_data = all_nodes_data[key];
+
+                let node_num = node_data[0];
+                let timestamp_moment = moment.unix(node_data[3]);
+                let timeFromNow = timestamp_moment.fromNow();
+
+                updateTime('#node' + node_num.toString(), timeFromNow);
+
+            }
+        })();
+        setInterval(update, 1000);
+
+        function setActive(node) {
+            // Change styling
+
+            $(node).removeClass("border-default").addClass("border-danger");
+            $(node + ' .card-header')
+                .removeClass("bg-default")
+                .addClass("bg-danger text-white");
+            $(node + ' .card-subtitle').text("Active");
+            $(node + ' .activity')
+                .removeClass("text-default")
+                .addClass("text-danger").text("None");
+            $(node + ' .card-footer')
+                .removeClass("bg-default")
+                .addClass("bg-danger text-white");
+
+        }
+
+        function setInactive(node) {
+            // Change styling
+            $(node).removeClass("border-success").removeClass("border-danger").addClass("border-default");
+            $(node + ' .card-header')
+                .removeClass("bg-success")
+                .removeClass("bg-danger")
+                .removeClass("text-white")
+                .addClass("bg-default");
+            $(node + ' .card-subtitle').text("Inactive");
+            $(node + ' .activity')
+                .removeClass("text-success")
+                .removeClass("text-danger")
+                .addClass("text-default").text("None");
+            $(node + ' .card-footer')
+                .removeClass("bg-success")
+                .removeClass("bg-danger")
+                .removeClass("text-white")
+                .addClass("bg-default")
+                .text("---");
+
+        }
+
+        function setActivity(node) {
+
+            $(node).removeClass("border-danger").addClass("border-success");
+            $(node + ' .card-header')
+                .removeClass("bg-danger")
+                .addClass("bg-success text-white");
+            $(node + ' .activity')
+                .removeClass("text-danger")
+                .addClass("text-success").text("Detected");
+            $(node + ' .card-footer')
+                .removeClass("bg-danger")
+                .addClass("bg-success text-white");
+
+        }
+
+        function clearActivity(node) {
+
+            $(node).removeClass("border-success").addClass("border-danger");
+            $(node + ' .card-header')
+                .removeClass("bg-success")
+                .addClass("bg-danger text-white");
+            $(node + ' .activity')
+                .removeClass("text-success")
+                .addClass("text-danger").text("None");
+            $(node + ' .card-footer')
+                .removeClass("bg-success")
+                .addClass("bg-danger text-white");
+
+        }
+
+        function updateTime(node, timeFromNow) {
+            $(node + ' .card-footer').text('State changed ' + timeFromNow);
+        }
+
+
+    </script>
+</body>
+
+</html>
